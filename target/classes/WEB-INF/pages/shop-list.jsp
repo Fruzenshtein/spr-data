@@ -9,10 +9,10 @@
 </head>
 <body>
 <h1>Shop List page</h1>
-<table border="1px" cellpadding="0" cellspacing="0" >
+<table style="text-align: center;" border="1px" cellpadding="0" cellspacing="0" >
 <thead>
 <tr>
-<th width="10%">id</th><th width="15%">name</th><th width="10%">rating</th><th width="10%">actions</th>
+<th width="25px">id</th><th width="150px">company</th><th width="25px">employees</th><th width="50px">actions</th>
 </tr>
 </thead>
 <tbody>

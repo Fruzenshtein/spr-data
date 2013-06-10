@@ -2,8 +2,13 @@ package com.spr.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.spr.exception.ShopNotFound;
 import com.spr.model.Shop;
 import com.spr.service.ShopService;
+import com.spr.validation.ShopValidator;
 
 @Controller
 @RequestMapping(value="/shop")
@@ -21,6 +27,14 @@ public class ShopController {
 	
 	@Autowired
 	private ShopService shopService;
+	
+	@Autowired
+	private ShopValidator shopValidator;
+	
+	@InitBinder
+	private void initBinder(WebDataBinder binder) {
+		binder.setValidator(shopValidator);
+	}
 
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public ModelAndView newShopPage() {
@@ -29,8 +43,12 @@ public class ShopController {
 	}
 	
 	@RequestMapping(value="/create", method=RequestMethod.POST)
-	public ModelAndView createNewShop(@ModelAttribute Shop shop, 
+	public ModelAndView createNewShop(@ModelAttribute @Valid Shop shop,
+			BindingResult result,
 			final RedirectAttributes redirectAttributes) {
+		
+		if (result.hasErrors())
+			return new ModelAndView("shop-new");
 		
 		ModelAndView mav = new ModelAndView();
 		String message = "New shop "+shop.getName()+" was successfully created.";
@@ -59,9 +77,13 @@ public class ShopController {
 	}
 	
 	@RequestMapping(value="/edit/{id}", method=RequestMethod.POST)
-	public ModelAndView editShop(@ModelAttribute Shop shop,
+	public ModelAndView editShop(@ModelAttribute @Valid Shop shop,
+			BindingResult result,
 			@PathVariable Integer id,
 			final RedirectAttributes redirectAttributes) throws ShopNotFound {
+		
+		if (result.hasErrors())
+			return new ModelAndView("shop-edit");
 		
 		ModelAndView mav = new ModelAndView("redirect:/index.html");
 		String message = "Shop was successfully updated.";
